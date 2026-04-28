@@ -1,0 +1,4 @@
+export enum CategoryModalType {
+    CATEGORY_CREATE = 'CATEGORY_CREATE',
+    CATEGORY_UPDATE = 'CATEGORY_UPDATE',
+}

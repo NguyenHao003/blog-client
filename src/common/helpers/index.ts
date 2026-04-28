@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { DATE_FORMAT, SORT_ORDER } from '../enums';
+
+dayjs.extend(relativeTime);
 
 export const setOrder = (sort: any, defaultOrder?: SORT_ORDER) => {
     const sortOrder =
@@ -27,4 +30,10 @@ export function formattedDate(
     return (
         (date && dayjs(date).format(format ?? DATE_FORMAT.DATE_MINUTE)) || ''
     );
+}
+
+export function timeFromNow(
+    date?: string | number | Date | dayjs.Dayjs | null | undefined
+): string {
+    return (date && dayjs(date).fromNow()) || '';
 }

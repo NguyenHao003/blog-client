@@ -77,7 +77,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, user }) => {
                                 items: avatarMenuItems,
                                 onClick: ({ key }) => {
                                     if (key === 'logout') {
-                                        window.location.href = '/auth/logout';
+                                        window.location.href = '/api/auth/logout';
                                     }
                                 },
                             }}

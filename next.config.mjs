@@ -21,6 +21,14 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pub-ba440cb1bbf94eaaa325012bc72e0bfa.r2.dev',
+      },
+    ],
+  },
 };
 
 export default nextConfig;

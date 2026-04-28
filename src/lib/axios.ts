@@ -1,4 +1,10 @@
+import { getAccessToken } from '@auth0/nextjs-auth0/client';
 import axios from 'axios';
+import {
+    clearAuthTokenCookie,
+    getAuthTokenFromCookie,
+    setAuthTokenCookie,
+} from './auth-token-cookie';
 
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
@@ -8,12 +14,30 @@ const axiosInstance = axios.create({
     },
 });
 
-// Request interceptor: Add auth tokens here
 axiosInstance.interceptors.request.use(
-    (config) => {
-        // Example: add Authorization header if token exists in localStorage
+    async (config) => {
         if (typeof window !== 'undefined') {
-            const token = localStorage.getItem('token');
+            let token = getAuthTokenFromCookie();
+
+            if (!token) {
+                try {
+                    const tokenResponse = await getAccessToken({
+                        audience: process.env.NEXT_PUBLIC_AUTH0_AUDIENCE,
+                        includeFullResponse: true,
+                    });
+
+                    token = tokenResponse.token;
+
+                    if (token) {
+                        setAuthTokenCookie(token, {
+                            expiresAt: tokenResponse.expires_at,
+                        });
+                    }
+                } catch {
+                    clearAuthTokenCookie();
+                }
+            }
+
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
