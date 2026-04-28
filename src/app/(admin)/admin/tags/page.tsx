@@ -3,37 +3,38 @@
 import { SORT_ORDER } from '@/common/enums';
 import { setOrder } from '@/common/helpers';
 import useModalStore from '@/common/hooks/use-modal';
-import UserModalForm from '@/modules/user/components/user-modal-form';
-import { UsersTable } from '@/modules/user/components/users-table';
-import UserFilter from '@/modules/user/components/user-filter';
-import { UserModalType } from '@/modules/user/enums';
-import { useUsers } from '@/modules/user/hooks/use-users';
-import { UserFilter as UserFilterType } from '@/modules/user/types/user-types';
+import TagFilter from '@/modules/tag/components/tag-filter';
+import TagModalForm from '@/modules/tag/components/tag-modal-form';
+import { TagsTable } from '@/modules/tag/components/tags-table';
+import { TagModalType } from '@/modules/tag/enums';
+import { useTags } from '@/modules/tag/hooks/use-tags';
+import { TagFilter as TagFilterType } from '@/modules/tag/types/tag-types';
 import { PageContainer } from '@ant-design/pro-components';
 import { Pagination } from 'antd';
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
 
-export default function UsersPage() {
+export default function TagsPage() {
     const [params, setParams] = useQueryStates({
         page: parseAsInteger.withDefault(1),
         pageSize: parseAsInteger.withDefault(20),
         sortField: parseAsString,
         sortOrder: parseAsString,
         keyword: parseAsString,
-        role: parseAsString,
     });
-    const { users, isFetching } = useUsers(params as UserFilterType);
+
+    const { tags, isFetching } = useTags(params as TagFilterType);
     const typeModal = useModalStore((s) => s.typeModal);
     const closeModal = useModalStore((s) => s.closeModal);
     const openModal = useModalStore((s) => s.openModal);
 
     const isModalOpen =
-        typeModal === UserModalType.USER_CREATE ||
-        typeModal === UserModalType.USER_UPDATE;
+        typeModal === TagModalType.TAG_CREATE ||
+        typeModal === TagModalType.TAG_UPDATE;
 
     const onSort = (_pagination: any, _filters: any, sorter: any) => {
         const orderField = sorter.field;
         const order = setOrder(sorter, SORT_ORDER.ASC);
+
         setParams({
             sortField: orderField,
             sortOrder: order,
@@ -43,33 +44,32 @@ export default function UsersPage() {
     return (
         <PageContainer
             header={{
-                title: 'User Management',
-                subTitle: 'Manage permissions and user accounts',
+                title: 'Tag Management',
+                subTitle: 'Manage tags for your posts',
             }}
         >
-            <UserFilter
+            <TagFilter
                 params={{
                     keyword: params.keyword,
-                    role: params.role,
                 }}
                 onFilter={(values: any) =>
                     setParams({
-                        keyword: values.username || null,
-                        role: values.role || null,
+                        keyword: values.keyword || null,
                         page: 1,
                     })
                 }
             />
-            <UsersTable
-                dataSource={users?.items || []}
+
+            <TagsTable
+                dataSource={tags?.items || []}
                 loading={isFetching}
                 pagination={{
-                    pageSize: params?.pageSize,
-                    current: params?.page,
+                    pageSize: params.pageSize,
+                    current: params.page,
                 }}
-                sortField={params?.sortField}
-                sortOrder={params?.sortOrder}
-                onCreate={() => openModal(UserModalType.USER_CREATE)}
+                sortField={params.sortField}
+                sortOrder={params.sortOrder}
+                onCreate={() => openModal(TagModalType.TAG_CREATE)}
                 onChange={onSort}
             />
 
@@ -79,15 +79,15 @@ export default function UsersPage() {
                 showTotal={(total, range) =>
                     `${range[0]}-${range[1]} of ${total} items`
                 }
-                total={users?.metadata?.totalItems}
-                current={params?.page}
-                pageSize={params?.pageSize}
+                total={tags?.metadata?.totalItems}
+                current={params.page}
+                pageSize={params.pageSize}
                 onChange={(page, pageSize) => {
                     setParams({ page, pageSize });
                 }}
             />
 
-            <UserModalForm open={isModalOpen} onCancel={closeModal} />
+            <TagModalForm open={isModalOpen} onCancel={closeModal} />
         </PageContainer>
     );
 }

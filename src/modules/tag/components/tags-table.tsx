@@ -1,4 +1,6 @@
-import { formattedDate, getSortOrder } from '@/common/helpers';
+'use client';
+
+import { getSortOrder } from '@/common/helpers';
 import useModalStore from '@/common/hooks/use-modal';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import {
@@ -6,13 +8,13 @@ import {
     ProTable,
     ProTableProps,
 } from '@ant-design/pro-components';
-import { Avatar, Button, Modal, Space, Tooltip } from 'antd';
-import { UserModalType } from '../enums';
-import { useDeleteUser } from '../hooks/use-delete-user';
-import { UserData } from '../types/user-types';
+import { Button, Modal, Space, Tooltip } from 'antd';
+import { TagModalType } from '../enums';
+import { useDeleteTag } from '../hooks/use-delete-tag';
+import { TagData } from '../types/tag-types';
 
-export type UsersTableProps = Partial<
-    ProTableProps<UserData, Record<string, unknown>>
+export type TagsTableProps = Partial<
+    ProTableProps<TagData, Record<string, unknown>>
 > & {
     pagination: {
         current: number;
@@ -24,33 +26,33 @@ export type UsersTableProps = Partial<
     onCreate?: () => void;
 };
 
-export const UsersTable = ({ ...props }: UsersTableProps) => {
+export const TagsTable = ({ ...props }: TagsTableProps) => {
     const { openModal } = useModalStore();
-    const { deleteUser } = useDeleteUser();
+    const { deleteTag } = useDeleteTag();
 
-    const handleDelete = (record: UserData) => {
+    const handleDelete = (record: TagData) => {
         Modal.confirm({
-            title: 'Delete User',
-            content: `Are you sure you want to delete user "${record.username}"? This action cannot be undone.`,
+            title: 'Delete Tag',
+            content: `Are you sure you want to delete tag "${record.name}"?`,
             okText: 'Delete',
             okType: 'danger',
             cancelText: 'Cancel',
             centered: true,
             onOk: async () => {
                 if (record.id) {
-                    await deleteUser(record.id);
+                    await deleteTag(record.id);
                 }
             },
         });
     };
 
-    const columns: ProColumns<UserData>[] = [
+    const columns: ProColumns<TagData>[] = [
         {
             title: 'No.',
             dataIndex: 'no.',
             valueType: 'text',
             width: 60,
-            render: (dom, record, index) => {
+            render: (_dom, _record, index) => {
                 const current = props.pagination.current;
                 const pageSize = props.pagination.pageSize;
                 return <span>{(current - 1) * pageSize + index + 1}</span>;
@@ -58,70 +60,32 @@ export const UsersTable = ({ ...props }: UsersTableProps) => {
         },
         {
             title: 'Name',
-            dataIndex: 'username',
+            dataIndex: 'name',
+            sorter: true,
+            sortOrder: getSortOrder(props?.sortOrder, props?.sortField, 'name'),
+        },
+        {
+            title: 'Slug',
+            dataIndex: 'slug',
             copyable: true,
             sorter: true,
-            sortOrder: getSortOrder(
-                props?.sortOrder,
-                props?.sortField,
-                'username'
-            ),
-
-            render: (dom, record) => (
-                <Space>
-                    <Avatar
-                        src={record.avatarUrl}
-                        shape="square"
-                        size={'large'}
-                    >
-                        {record.username.charAt(0).toUpperCase()}
-                    </Avatar>
-                    <span>{record.username}</span>
-                </Space>
-            ),
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-        },
-        {
-            title: 'Role',
-            dataIndex: 'role',
-            valueEnum: {
-                ADMIN: { text: 'Administrator' },
-                AUTHOR: { text: 'Author' },
-                VISITOR: { text: 'Visitor' },
-            },
-        },
-        {
-            title: 'Joined At',
-            dataIndex: 'createdAt',
-            valueType: 'dateTime',
-            sorter: true,
-            sortOrder: getSortOrder(
-                props?.sortOrder,
-                props?.sortField,
-                'createdAt'
-            ),
-            render: (dom, record) => (
-                <span>{formattedDate(record.createdAt)}</span>
-            ),
+            sortOrder: getSortOrder(props?.sortOrder, props?.sortField, 'slug'),
         },
         {
             title: 'Actions',
             valueType: 'option',
             render: (_dom, record) => (
                 <Space>
-                    <Tooltip title="Edit User">
+                    <Tooltip title="Edit Tag">
                         <Button
                             type="text"
                             icon={<EditOutlined />}
                             onClick={() =>
-                                openModal(UserModalType.USER_UPDATE, record)
+                                openModal(TagModalType.TAG_UPDATE, record)
                             }
                         />
                     </Tooltip>
-                    <Tooltip title="Delete User">
+                    <Tooltip title="Delete Tag">
                         <Button
                             type="text"
                             danger
@@ -135,7 +99,7 @@ export const UsersTable = ({ ...props }: UsersTableProps) => {
     ];
 
     return (
-        <ProTable<UserData, Record<string, unknown>>
+        <ProTable<TagData, Record<string, unknown>>
             columns={columns}
             rowKey="id"
             search={false}
@@ -147,7 +111,7 @@ export const UsersTable = ({ ...props }: UsersTableProps) => {
                         type="primary"
                         onClick={props.onCreate}
                     >
-                        New User
+                        New Tag
                     </Button>,
                 ],
             }}

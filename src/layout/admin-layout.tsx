@@ -4,18 +4,56 @@ import {
     AppstoreOutlined,
     DashboardOutlined,
     FileTextOutlined,
+    LogoutOutlined,
     SettingOutlined,
+    TagsOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 import { MenuDataItem, ProLayout } from '@ant-design/pro-components';
+import type { MenuProps } from 'antd';
+import { Dropdown, Space } from 'antd';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
-export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
+type AdminLayoutProps = {
+    children: React.ReactNode;
+    user: {
+        name: string;
+        email?: string | null;
+        picture?: string | null;
+    };
+};
+
+export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, user }) => {
     const pathname = usePathname();
+    const normalizedName = user.name?.trim();
+    const normalizedEmail = user.email?.trim();
+    const showEmailItem = normalizedEmail && normalizedEmail !== normalizedName;
+    const avatarMenuItems: MenuProps['items'] = [
+        {
+            key: 'profile-name',
+            label: normalizedName || 'User',
+            disabled: true,
+        },
+        ...(showEmailItem
+            ? [
+                  {
+                      key: 'profile-email',
+                      label: normalizedEmail,
+                      disabled: true,
+                  },
+              ]
+            : []),
+        {
+            type: 'divider',
+        },
+        {
+            key: 'logout',
+            icon: <LogoutOutlined />,
+            label: 'Log out',
+        },
+    ];
 
     return (
         <div style={{ height: '100vh' }}>
@@ -24,28 +62,34 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({
                 logo="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
                 location={{ pathname }}
                 layout="side"
-                colorPrimary="#1677ff"
                 fixSiderbar
-                siderWidth={208} // Fixed width to prevent jumping
+                siderWidth={208}
                 breakpoint={false}
                 menu={{ type: 'group' }}
-                token={{
-                    header: {
-                        colorBgHeader: '#fff',
-                        heightLayoutHeader: 64,
-                    },
-                    sider: {
-                        colorBgMenuItemSelected: '#e6f4ff',
-                    },
-                    pageContainer: {
-                        paddingInlinePageContainerContent: 24,
-                        paddingBlockPageContainerContent: 24,
-                    },
-                }}
                 avatarProps={{
-                    src: 'https://gw.alipayobjects.com/zos/antfincdn/efpAdH7ic/Kyva9NoSBy0iDsOxubMf.png',
+                    src: user.picture || undefined,
                     size: 'small',
-                    title: 'Admin',
+                    title: '',
+                    icon: <UserOutlined />,
+                    render: (_, defaultDom) => (
+                        <Dropdown
+                            menu={{
+                                items: avatarMenuItems,
+                                onClick: ({ key }) => {
+                                    if (key === 'logout') {
+                                        window.location.href = '/auth/logout';
+                                    }
+                                },
+                            }}
+                            placement="bottomRight"
+                            trigger={['click']}
+                        >
+                            <Space style={{ cursor: 'pointer' }}>
+                                {defaultDom}
+                                {user.name}
+                            </Space>
+                        </Dropdown>
+                    ),
                 }}
                 route={{
                     path: '/admin',
@@ -64,6 +108,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({
                             path: '/admin/categories',
                             name: 'Categories',
                             icon: <AppstoreOutlined />,
+                        },
+                        {
+                            path: '/admin/tags',
+                            name: 'Tags',
+                            icon: <TagsOutlined />,
                         },
                         {
                             path: '/admin/users',

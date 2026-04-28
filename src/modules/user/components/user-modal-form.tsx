@@ -1,7 +1,10 @@
 'use client';
 
 import useModalStore from '@/common/hooks/use-modal';
-import { Form, Input, Modal, Select, Skeleton } from 'antd';
+import { ImageUpload } from '@/modules/upload/components/image-upload';
+import { UPLOAD_FOLDER } from '@/modules/upload/enums';
+import { useUpload } from '@/modules/upload/hooks/use-upload';
+import { Form, Input, message, Modal, Select, Skeleton } from 'antd';
 import React, { useEffect } from 'react';
 import { UserModalType } from '../enums';
 import { useCreateUser } from '../hooks/use-create-user';
@@ -17,6 +20,7 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ open, onCancel }) => {
     const [form] = Form.useForm();
     const { createUser, isPending: isCreating } = useCreateUser();
     const { updateUser, isPending: isUpdating } = useUpdateUser();
+    const { mutateAsync: uploadFile, isPending: isUploading } = useUpload();
 
     const typeModal = useModalStore((s) => s.typeModal);
     const dataEdit = useModalStore((s) => s.dataEdit);
@@ -27,6 +31,29 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ open, onCancel }) => {
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
+
+            const { avatarUrl, ...restValues } = values;
+            const payload: any = { ...restValues };
+
+            if (Array.isArray(avatarUrl)) {
+                if (avatarUrl.length > 0) {
+                    const file = avatarUrl[0].originFileObj;
+                    if (file) {
+                        const { fileId, publicUrl } = await uploadFile({
+                            file: file,
+                            folder: UPLOAD_FOLDER.AVATAR,
+                        });
+
+                        if (!fileId || !publicUrl) {
+                            return message.error('Failed to upload avatar');
+                        }
+                        payload.avatarUrl = publicUrl;
+                    }
+                } else if (isEdit && avatarUrl.length === 0) {
+                    payload.avatarUrl = null;
+                }
+            }
+
             const successCallback = {
                 onSuccess: () => {
                     form.resetFields();
@@ -35,8 +62,8 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ open, onCancel }) => {
             };
 
             return dataEdit?.id
-                ? updateUser(dataEdit.id, values, successCallback)
-                : createUser(values, successCallback);
+                ? updateUser(dataEdit.id, payload, successCallback)
+                : createUser(payload, successCallback);
         } catch (error) {
             console.error('Validate Failed:', error);
         }
@@ -46,6 +73,10 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ open, onCancel }) => {
         if (open) {
             if (isEdit && user) {
                 form.setFieldsValue(user);
+                const existingAvatar = user.avatarUrl;
+                if (existingAvatar) {
+                    form.setFieldValue('urlAvatar', existingAvatar);
+                }
             }
         } else {
             form.resetFields();
@@ -58,10 +89,13 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ open, onCancel }) => {
             open={open}
             onOk={handleOk}
             onCancel={onCancel}
-            confirmLoading={isCreating || isUpdating}
+            confirmLoading={isCreating || isUpdating || isUploading}
             okText={isEdit ? 'Update' : 'Create'}
             cancelText="Cancel"
-            destroyOnClose
+            destroyOnHidden
+            style={{
+                top: 24,
+            }}
         >
             {isFetching ? (
                 <Skeleton active paragraph={{ rows: 4 }} />
@@ -71,7 +105,12 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ open, onCancel }) => {
                     layout="vertical"
                     name="user_form"
                     initialValues={{ role: 'AUTHOR' }}
+                    disabled={isFetching || isUpdating || isUploading}
                 >
+                    <Form.Item name="avatarUrl" label="Avatar">
+                        <ImageUpload />
+                    </Form.Item>
+
                     <Form.Item
                         name="username"
                         label="Username"

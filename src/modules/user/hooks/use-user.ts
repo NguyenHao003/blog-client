@@ -10,7 +10,7 @@ export const useUser = (id?: string) => {
     });
 
     return {
-        user: query.data?.data,
+        user: query.data?.data?.data,
         ...query,
     };
 };

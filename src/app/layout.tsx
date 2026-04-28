@@ -4,6 +4,7 @@ import NextTopLoader from "nextjs-toploader";
 import QueryProvider from "@/components/providers/query-provider";
 import StyleRegistry from "@/components/providers/style-registry";
 import AntdProvider from "@/components/providers/antd-provider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -20,16 +21,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-     <body className={`${inter.className} antialiased`}>
-      <StyleRegistry>
-        <AntdProvider>
-          <QueryProvider>
-            <NextTopLoader showSpinner={false} color="#1677ff" />
-            {children}
-          </QueryProvider>
-        </AntdProvider>
-      </StyleRegistry>
-</body>
+      <body className={`${inter.className} antialiased`}>
+        <StyleRegistry>
+          <AntdProvider>
+            <NuqsAdapter>
+              <QueryProvider>
+                <NextTopLoader showSpinner={false} color="#1677ff" />
+                {children}
+              </QueryProvider>
+            </NuqsAdapter>
+          </AntdProvider>
+        </StyleRegistry>
+      </body>
     </html>
   );
 }
+

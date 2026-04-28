@@ -28,8 +28,8 @@ axiosInstance.interceptors.request.use(
 // Response interceptor: Handle common errors globally
 axiosInstance.interceptors.response.use(
     (response) => {
-        // Return the data directly from the response
-        return response.data;
+        // Return the full AxiosResponse object to preserve type structure
+        return response;
     },
     (error) => {
         // Extract error message
