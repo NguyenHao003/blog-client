@@ -20,7 +20,9 @@ import {
     Typography,
     message,
 } from 'antd';
+import TextEditor from '@/common/components/text-editor';
 import React, { useEffect } from 'react';
+
 import { PostModalType } from '../enums';
 import { useCreatePost } from '../hooks/use-create-post';
 import { usePost } from '../hooks/use-post';
@@ -324,11 +326,8 @@ const PostEditorModal: React.FC<PostEditorModalProps> = ({
                                                 },
                                             ]}
                                         >
-                                            <Input.TextArea
-                                                rows={20}
-                                                placeholder="Write the post content here"
-                                                style={{ borderRadius: 18 }}
-                                            />
+                                            <TextEditor />
+
                                         </Form.Item>
                                     </Card>
                                 </Col>
