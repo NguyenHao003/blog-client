@@ -7,9 +7,7 @@ export interface CommonFilter {
 }
 
 export interface CommonAttribute {
-    id?: string | number;
+    id?: string;
     startCreatedAt?: string | Date | null;
     endCreatedAt?: string | Date | null;
 }
-
-export type CommonAttibute = CommonAttribute;
