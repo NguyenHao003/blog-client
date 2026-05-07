@@ -6,4 +6,7 @@ export const auth0 = new Auth0Client({
     },
     signInReturnToPath: '/admin',
     enableAccessTokenEndpoint: true,
+    routes: {
+        callback: '/auth/callback',
+    },
 });
