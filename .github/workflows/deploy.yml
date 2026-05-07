@@ -33,7 +33,7 @@ jobs:
                       ${{ env.IMAGE_NAME_LOWER }}:latest
                       ${{ env.IMAGE_NAME_LOWER }}:${{ github.sha }}
                   build-args: |
-                      NEXT_PUBLIC_API_URL=https://it-blog-server.duckdns.org/api
+                      NEXT_PUBLIC_API_URL=http://localhost:3000/api
 
             - name: Deploy via SSH
               uses: appleboy/ssh-action@v1
@@ -48,12 +48,13 @@ jobs:
                       docker stop frontend || true
                       docker rm frontend || true
                       docker run -d \
-                      --name frontend \
-                      --restart unless-stopped \
-                      --network host \
-                      -e PORT=4200 \
-                      -e NEXT_PUBLIC_API_URL=https://it-blog-server.duckdns.org/api \
-                      ${{ env.IMAGE_NAME_LOWER }}:latest
+                        --name frontend \
+                        --restart unless-stopped \
+                        --network host \
+                        -e PORT=4200 \
+                        -e NEXT_PUBLIC_API_URL=http://localhost:3000/api \
+                        ${{ env.IMAGE_NAME_LOWER }}:latest
+                      docker image prune -f
 
             - name: Notify Telegram success
               if: success()
