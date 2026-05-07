@@ -48,13 +48,12 @@ jobs:
                       docker stop frontend || true
                       docker rm frontend || true
                       docker run -d \
-                        --name frontend \
+                         --name frontend \
                         --restart unless-stopped \
                         --network host \
                         -e PORT=4200 \
-                        -e NEXT_PUBLIC_API_URL=http://localhost:3000/api \
+                        --env-file /www/wwwroot/frontend/.env \
                         ${{ env.IMAGE_NAME_LOWER }}:latest
-                      docker image prune -f
 
             - name: Notify Telegram success
               if: success()
