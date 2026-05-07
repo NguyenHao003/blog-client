@@ -22,6 +22,9 @@ export const postApis = {
     getPostById: async (id: string | number) => {
         return axiosInstance.get<ApiResponse<PostData>>(`/posts/${id}`);
     },
+    getPostBySlug: async (slug: string) => {
+        return axiosInstance.get<ApiResponse<PostData>>(`/posts/slug/${slug}`);
+    },
     updatePost: async (id: string | number, data: UpdatePostPayload) => {
         return axiosInstance.patch<ApiResponse<PostData>>(`/posts/${id}`, data);
     },

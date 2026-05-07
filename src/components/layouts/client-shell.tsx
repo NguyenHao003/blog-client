@@ -1,6 +1,13 @@
 'use client';
 
-import { MenuOutlined, SearchOutlined } from '@ant-design/icons';
+import { 
+    MenuOutlined, 
+    SearchOutlined, 
+    FacebookFilled, 
+    GithubFilled, 
+    LinkedinFilled,
+    RocketOutlined 
+} from '@ant-design/icons';
 import { Button, Drawer, Input, Layout, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -165,7 +172,9 @@ export default function ClientShell({
                 <div className="mx-auto w-full max-w-[1280px]">
                     <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-start">
                         <div className="flex gap-5">
-                            <div className="h-24 w-24 shrink-0 rounded-2xl bg-[linear-gradient(135deg,_#1d4ed8_0%,_#0f172a_120%)]" />
+                            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,_#1d4ed8_0%,_#0f172a_120%)] shadow-lg">
+                                <RocketOutlined style={{ fontSize: 42, color: 'white' }} />
+                            </div>
                             <div>
                                 <Title
                                     level={4}
@@ -183,10 +192,16 @@ export default function ClientShell({
                                     trình, trải nghiệm và những bài viết dài hơi
                                     về cuộc sống, du lịch và cảm hứng làm việc.
                                 </Paragraph>
-                                <Space size={10}>
-                                    <div className="h-8 w-8 rounded-full bg-white" />
-                                    <div className="h-8 w-8 rounded-full bg-white" />
-                                    <div className="h-8 w-8 rounded-full bg-white" />
+                                <Space size={12}>
+                                    <Link href="#" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm transition-all hover:scale-110 hover:text-blue-700">
+                                        <FacebookFilled style={{ fontSize: 18 }} />
+                                    </Link>
+                                    <Link href="#" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-800 shadow-sm transition-all hover:scale-110 hover:text-black">
+                                        <GithubFilled style={{ fontSize: 18 }} />
+                                    </Link>
+                                    <Link href="#" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-blue-500 shadow-sm transition-all hover:scale-110 hover:text-blue-600">
+                                        <LinkedinFilled style={{ fontSize: 18 }} />
+                                    </Link>
                                 </Space>
                             </div>
                         </div>

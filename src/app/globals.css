@@ -21,3 +21,67 @@
     padding: 0 !important;
   }
 }
+
+@layer components {
+  .ck-content {
+    font-size: 1.125rem;
+    line-height: 1.8;
+  }
+  
+  .ck-content h1, .ck-content h2, .ck-content h3, .ck-content h4 {
+    color: #1e293b;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .ck-content h1 { font-size: 2.25rem; }
+  .ck-content h2 { font-size: 1.875rem; }
+  .ck-content h3 { font-size: 1.5rem; }
+  
+  .ck-content p { margin-bottom: 1.25rem; }
+  
+  .ck-content ul, .ck-content ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+  
+  .ck-content ul { list-style-type: disc; }
+  .ck-content ol { list-style-type: decimal; }
+  
+  .ck-content blockquote {
+    border-left: 4px solid #e2e8f0;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #64748b;
+    margin: 1.5rem 0;
+  }
+  
+  .ck-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+  
+  .ck-content table td, .ck-content table th {
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem;
+  }
+  
+  .ck-content table th {
+    background-color: #f8fafc;
+    font-weight: 600;
+  }
+  
+  .ck-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  /* Aspect ratio for videos if any */
+  .ck-content .media {
+    margin: 1.5rem 0;
+  }
+}

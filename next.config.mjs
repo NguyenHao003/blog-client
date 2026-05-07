@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   transpilePackages: [
     "antd",
     "@ant-design/pro-components",
@@ -32,6 +33,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'pub-ba440cb1bbf94eaaa325012bc72e0bfa.r2.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
       },
     ],
   },
