@@ -51,6 +51,7 @@ jobs:
                         --name frontend \
                         --restart unless-stopped \
                         -p 4200:4200 \
+                        -e PORT=4200 \
                         -e NEXT_PUBLIC_API_URL=https://it-blog-server.duckdns.org \
                         ${{ env.IMAGE_NAME_LOWER }}:latest
                       docker image prune -f
